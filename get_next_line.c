@@ -30,6 +30,15 @@ char	*ft_split (int fd)
 	return (tmp);
 }
 
+char	*new_string(char *tmp1, char *tmp2)
+{
+	tmp1 = (char *)malloc(sizeof(char) * BUFFER_SIZE + 1);
+	if (tmp1 == NULL)
+		return (NULL);
+	tmp1[0] = '\0';
+	ft_strlcat (tmp1, tmp2, BUFFER_SIZE + 1);
+	return (tmp1);
+}
 
 char	*get_next_line(int fd)
 {
@@ -42,14 +51,13 @@ char	*get_next_line(int fd)
 		return (NULL);
 	while (ft_strrchr (backup[fd], '\n') == 0)
 	{
-		tmp = backup[fd];
+		tmp = new_string (tmp, backup[fd]);
 		i = read (fd, backup[fd], BUFFER_SIZE);
-		if (i < BUFFER_SIZE)
-			break ;
 		backup[fd] = ft_strjoin (tmp, backup[fd]);
+		if (i < BUFFER_SIZE)
+			break;
 	}
 	tmp = ft_split (fd);
 	return (tmp);
 }
 
-// 개행문자가 있는 문자열을 split으로 처리한 후 backup배열 내에 문자열이 존재할때, 다음 gnl호출시 남은 문자열과 다음 문자열을 합쳐야함.
