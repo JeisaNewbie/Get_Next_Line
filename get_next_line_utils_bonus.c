@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jhwang2 <jhwang2@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/08/29 15:46:14 by jhwang2           #+#    #+#             */
+/*   Updated: 2022/08/29 17:55:17 by jhwang2          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
 
 t_list	*ft_lstlast(t_list *lst)
@@ -65,13 +77,12 @@ size_t	ft_strlcat(char *dst, const char *src, size_t dstsize)
 	size_t	len_dnd;
 	size_t	size;
 
-	len_src = 0;
 	len_dst = 0;
 	while (dst[len_dst] != '\0')
 		len_dst++;
 	len_dnd = len_dst + dstsize;
 	if (dstsize <= len_dst)
-		return (dstsize + len_src);
+		return (NULL);
 	size = len_dnd - 1;
 	while (size > 0)
 	{
@@ -81,5 +92,5 @@ size_t	ft_strlcat(char *dst, const char *src, size_t dstsize)
 		size--;
 	}
 	dst[len_dst] = '\0';
-	return (len_dns);
+	return (len_dnd);
 }

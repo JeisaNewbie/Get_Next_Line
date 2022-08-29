@@ -1,8 +1,20 @@
-#include "get_next_line_utils_bonus.c"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jhwang2 <jhwang2@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/08/29 15:46:07 by jhwang2           #+#    #+#             */
+/*   Updated: 2022/08/29 18:00:57 by jhwang2          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-t_list	*backup;
+#include "get_next_line.h"
 
-void	ft_strmove (char *tmp, int length)
+t_list	*backup = NULL;
+
+void	ft_strmove(char *tmp, int length)
 {
 	int	i;
 
@@ -19,30 +31,30 @@ void	ft_strmove (char *tmp, int length)
 	}
 }
 
-char	*ft_split (char *backup_content, int fd)
+char	*ft_split(t_list *lstbackup, int fd)
 {
 	char	*tmp;
 	int		i;
 
-	i = ft_strrchr (backup_content, '\n');
-	tmp = ft_strdup (backup_content, i);
+	i = ft_strrchr (lstbackup->content, '\n');
+	tmp = ft_strdup (lstbackup->content, i);
 	ft_strmove (lstbackup->content, i + 1);
 	return (tmp);
 }
 
-char	*new_string(char *tmp, char *backup_content)
+char	*new_string(char *tmp, int count, char *backup_content)
 {
 	char	*tmp1;
 
-	tmp1 = (char *)malloc(sizeof(char) * BUFFER_SIZE + 1);
+	tmp1 = (char *)malloc(sizeof(char) * (BUFFER_SIZE * count) + 1);
 	if (tmp1 == NULL)
 		return (NULL);
 	tmp1[0] = '\0';
-	ft_strlcat (tmp1, backup_content, BUFFER_SIZE + 1);
+	ft_strlcat (tmp1, backup_content, (BUFFER_SIZE * count) + 1);
 	return (tmp1);
 }
 
-t_list	find_fd(int fd)
+t_list	*find_fd(int fd)
 {
 	t_list	*tmp;
 	char	*str;
@@ -58,7 +70,7 @@ t_list	find_fd(int fd)
 			tmp = tmp->next;
 		}
 	}
-	if (tmp->fd != fd)
+	if ((tmp->fd != fd) || tmp->content == 0)
 	{
 		if ((i = read (fd, str, BUFFER_SIZE)) < 0)
 			return (NULL);
@@ -69,24 +81,28 @@ t_list	find_fd(int fd)
 
 char	*get_next_line(int fd)
 {
-	t_list	*lstbackup;
-	char	*tmp;
-	int		i;
+	static t_list	*backup = NULL;
+	t_list			*lstbackup;
+	char			*tmp;
+	int				i;
+	int				count;
 
+	count = 1;
 	if (backup == NULL)
 	{
-		if((i = read (fd, tmp, BUFFER_SIZE)) < 0)
+		if ((i = read (fd, tmp, BUFFER_SIZE)) < 0)
 			return (NULL);		
 		backup = ft_lstnew (tmp, fd);
 	}
 	lstbackup = find_fd (fd);
 	while (ft_strrchr (lstbackup->content, '\n') == 0)
 	{
-		tmp = new_string (tmp,lstbackup->content);//백업안의 내용을 저장하려
+		tmp = new_string (tmp, count, lstbackup->content);
+		count++;
 		i = read (fd, lstbackup->content, BUFFER_SIZE);
 		lstbackup->content = ft_strjoin (tmp, lstbackup->content);
 		if (i < BUFFER_SIZE)
-			break;
+			break ;
 	}
 	tmp = ft_split (lstbackup, fd);
 	return (tmp);
