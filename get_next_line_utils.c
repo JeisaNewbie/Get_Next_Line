@@ -1,91 +1,77 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jhwang2 <jhwang2@student.42seoul.kr>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/09/07 15:01:04 by jhwang2           #+#    #+#             */
+/*   Updated: 2022/09/08 18:52:00 by jhwang2          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "get_next_line.h"
 
-char	*ft_strdup(const char *s1, int buffer_size)
+t_list	*lstnew(int fd)
 {
-	char	*tmp;
-	int		i;
+	t_list	*new;
 
-	tmp = (char *)malloc(sizeof(char) * (buffer_size + 1));
-	if (tmp == 0)
-		return (0);
-	i = 0;
-	while (i < buffer_size)
-	{
-		tmp[i] = s1[i];
-		i++;
-	}
-	tmp[buffer_size] = '\0';
-	return (tmp);
+	new = (t_list *)malloc(sizeof(t_list));
+	new->content = (char *)malloc(sizeof(char) * BUFFER_SIZE + 1);
+	if (new == NULL || new->content == NULL)
+		return (NULL);
+	new->next = NULL;
+	new->fd = fd;
+	new->next_fd = 0;
+	return (new);
 }
 
-int	ft_strrchr(char *s, int c)
+void	lstfree(int fd, t_list *backup)
+{
+	t_list	*tmp;
+
+	while (backup->next_fd != fd)
+		backup = backup->next;
+	tmp = backup->next;
+	backup->next = backup->next->next;
+	backup->next_fd = backup->next->next_fd;
+	free (tmp->content);
+	free (tmp);
+	tmp = NULL;
+}
+
+int	ft_strrchr(const char *s, int c, int count)
 {
 	char	*string;
 	char	ch;
 	int		i;
 
+	i = 0;
 	string = (char *)s;
 	ch = (char)c;
-	i = 0;
-	while (i < BUFFER_SIZE)
+	while (i <= (BUFFER_SIZE * count))
 	{
-		if (string[i] == ch)
+		if (string[i] == ch || string[i] == '\0')
 			return (i);
 		i++;
 	}
 	return (0);
 }
 
-size_t	ft_strlen(const char *str)
-{
-	size_t	i;
-
-	i = 0;
-	while (str[i] != '\0')
-		i++;
-	return (i);
-}
-
-size_t	ft_strlcat(char *dst, const char *src, size_t dstsize)
+void	ft_strlcat(char *dst, const char *src, size_t dstsize)
 {
 	size_t	len_dst;
-	size_t	len_src;
-	size_t	len_dns;
-	size_t	size;
+	size_t	len_total;
 
-	len_src = 0;
 	len_dst = 0;
-	while (src[len_src] != '\0')
-		len_src++;
-	while (dst[len_dst] != '\0' && len_dst < BUFFER_SIZE)
+	while (dst[len_dst] != '\0')
 		len_dst++;
-	len_dns = len_dst + len_src;
-	if (dstsize <= len_dst)
-		return (dstsize + len_src);
-	size = dstsize - len_dst - 1;
-	while (*src != '\0' && size > 0)
+	len_total = len_dst + dstsize;
+	while (len_dst < len_total)
 	{
 		dst[len_dst] = *src;
 		src++;
 		len_dst++;
-		size--;
 	}
 	dst[len_dst] = '\0';
-	return (len_dns);
-}
-
-char	*ft_strjoin(char const *s1, char const *s2)
-{
-	char	*tmp;
-	int		len_s1;
-
-	len_s1 = ft_strlen(s1);
-	tmp = (char *)malloc(sizeof(char) * (len_s1 + BUFFER_SIZE + 1));
-	if (tmp == 0)
-		return (0);
-	tmp[0] = '\0';
-	ft_strlcat(tmp, s1, len_s1 + 1);
-	ft_strlcat(tmp, s2, len_s1 + BUFFER_SIZE + 1);
-	tmp[len_s1 + BUFFER_SIZE] = '\0';
-	return (tmp);
+	return ;
 }
