@@ -58,7 +58,7 @@ int	ft_strlen(const char *str)
 char	*ft_split(t_list **backup)
 {
 	char	*tmp;
-	//char	*temp;
+	char	*temp;
 	int		i;
 	int		j;
 
@@ -76,13 +76,13 @@ char	*ft_split(t_list **backup)
 		j++;
 	}
 	tmp[j] = '\0';
-	//temp = (*backup)->content;
+	temp = (*backup)->content;
 	(*backup)->content = &(*backup)->content[j];
-	//if ((*backup)->content[j] == '\0')
-	//{
-		//free (temp);
-	//	(*backup)->content = NULL;
-	//}
+	if ((*backup)->content[0] == '\0')
+	{
+		free (temp);
+		(*backup)->content = NULL;
+	}
 	return (tmp);
 }
 
@@ -149,12 +149,12 @@ char	*get_next_line(int fd)
 	return (line);
 }
 
-int main()
-{
-	int fd = open ("./1char.txt", O_RDWR);
-	char	*gnl;
-	gnl = get_next_line (fd);
-	printf ("%s \n", gnl);
-	gnl = get_next_line (fd);
-	printf ("%s \n", gnl);
-}
+//int main()
+//{
+//	int fd = open ("./1char.txt", O_RDWR);
+//	char	*gnl;
+//	gnl = get_next_line (fd);
+//	printf ("%s \n", gnl);
+//	gnl = get_next_line (fd);
+//	printf ("%s \n", gnl);
+//}
