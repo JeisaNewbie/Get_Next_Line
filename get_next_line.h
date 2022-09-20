@@ -33,5 +33,6 @@ char    *ft_strjoin(char *s1, char *s2);
 int ft_strlen(const char *str);
 char    *ft_split(t_list **backup);
 char    *read_fd(int fd, t_list **backup);
+int ft_strchr(const char *s, int c);
 
 #endif

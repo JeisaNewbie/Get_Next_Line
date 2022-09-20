@@ -66,11 +66,7 @@ char	*ft_split(t_list **backup)
 	j = 0;
 	if ((*backup)->content == NULL)
 		return (NULL);
-	while ((*backup)->content[i] != '\n' &&
-	(*backup)->content[i] != '\0')
-		i++;
-	if ((*backup)->content[i] == '\n')
-		i++;
+	i = ft_strchr ((*backup)->content, '\n');
 	tmp = (char *)malloc(sizeof(char) * (i + 1));
 	if (tmp == NULL)
 		return (NULL);
@@ -153,12 +149,12 @@ char	*get_next_line(int fd)
 	return (line);
 }
 
-//int main()
-//{
-//	int fd = open ("./1char.txt", O_RDWR);
-//	char	*gnl;
-//	gnl = get_next_line (fd);
-//	printf ("%s \n", gnl);
-//	gnl = get_next_line (fd);
-//	printf ("%s \n", gnl);
-//}
+int main()
+{
+	int fd = open ("./1char.txt", O_RDWR);
+	char	*gnl;
+	gnl = get_next_line (fd);
+	printf ("%s \n", gnl);
+	gnl = get_next_line (fd);
+	printf ("%s \n", gnl);
+}

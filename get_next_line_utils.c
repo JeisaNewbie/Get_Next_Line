@@ -36,7 +36,7 @@ void	lstfree(t_list **backup)
 	free (*backup);
 }
 
-int	ft_strrchr(const char *s, int c, int count)
+int	ft_strchr(const char *s, int c)
 {
 	char	*string;
 	char	ch;
@@ -45,13 +45,13 @@ int	ft_strrchr(const char *s, int c, int count)
 	i = 0;
 	string = (char *)s;
 	ch = (char)c;
-	while (i <= (BUFFER_SIZE * count))
+	while (string[i] != '\0')
 	{
-		if (string[i] == ch || string[i] == '\0')
-			return (i);
+		if (string[i] == ch)
+			return (i + 1);
 		i++;
 	}
-	return (0);
+	return (i);
 }
 
 char	*ft_strlcat(char *dst, char *src, size_t count)
