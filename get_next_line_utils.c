@@ -16,27 +16,24 @@ t_list	*lstnew(int fd)
 	t_list	*new;
 
 	new = (t_list *)malloc(sizeof(t_list));
-	new->content = (char *)malloc(sizeof(char) * BUFFER_SIZE + 1);
-	if (new == NULL || new->content == NULL)
+	if (new == NULL)
 		return (NULL);
+	new->content = NULL;
 	new->next = NULL;
 	new->fd = fd;
-	new->next_fd = 0;
 	return (new);
 }
 
-void	lstfree(int fd, t_list *backup)
+void	lstfree(t_list **backup)
 {
-	t_list	*tmp;
-
-	while (backup->next_fd != fd)
-		backup = backup->next;
-	tmp = backup->next;
-	backup->next = backup->next->next;
-	backup->next_fd = backup->next->next_fd;
-	free (tmp->content);
-	free (tmp);
-	tmp = NULL;
+	if (backup == NULL || *backup == NULL)
+		return ;
+	if ((*backup)->content != NULL)
+	{
+		free ((*backup)->content);
+		(*backup)->content = NULL;
+	}
+	free (*backup);
 }
 
 int	ft_strrchr(const char *s, int c, int count)
@@ -57,21 +54,29 @@ int	ft_strrchr(const char *s, int c, int count)
 	return (0);
 }
 
-void	ft_strlcat(char *dst, const char *src, size_t dstsize)
+char	*ft_strlcat(char *dst, char *src, size_t count)
 {
-	size_t	len_dst;
-	size_t	len_total;
+	size_t			len_dst;
+	unsigned long	i;
+	char			*tmp;
 
+	tmp = (char *)malloc(sizeof(char) * (BUFFER_SIZE * (count + 1)));
 	len_dst = 0;
 	while (dst[len_dst] != '\0')
-		len_dst++;
-	len_total = len_dst + dstsize;
-	while (len_dst < len_total)
 	{
-		dst[len_dst] = *src;
-		src++;
+		tmp[len_dst] = dst[len_dst];
 		len_dst++;
 	}
-	dst[len_dst] = '\0';
-	return ;
+	i = len_dst;
+	while (i < BUFFER_SIZE * count)
+	{
+		tmp[i] = *src;
+		src++;
+		len_dst++;
+		i++;
+	}
+	tmp[len_dst + i] = '\0';
+	free (dst);
+	free (src);
+	return (tmp);
 }
