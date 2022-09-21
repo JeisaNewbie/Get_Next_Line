@@ -6,7 +6,7 @@
 /*   By: jhwang2 <jhwang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/07 15:01:38 by jhwang2           #+#    #+#             */
-/*   Updated: 2022/09/20 12:33:06 by jhwang2          ###   ########.fr       */
+/*   Updated: 2022/09/20 19:46:03 by jhwang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "get_next_line.h"
@@ -77,12 +77,13 @@ char	*ft_split(t_list **backup)
 	}
 	tmp[j] = '\0';
 	temp = (*backup)->content;
-	(*backup)->content = &(*backup)->content[j];
+	(*backup)->content = ft_strjoin(&(*backup)->content[j], "");
 	if ((*backup)->content[0] == '\0')
 	{
-		free (temp);
+		free ((*backup)->content);
 		(*backup)->content = NULL;
 	}
+	free (temp);
 	return (tmp);
 }
 
@@ -101,7 +102,7 @@ char	*read_fd(int fd, t_list **backup)
 		tmp[count] = '\0';
 		while (tmp[i] != '\n' && tmp[i] != '\0')
 			i++;
-		if (i < BUFFER_SIZE)
+		if (i < count)
 			break ;
 		tmpptr = (*backup)->content;
 		(*backup)->content = ft_strjoin ((*backup)->content, tmp);
@@ -141,7 +142,7 @@ char	*get_next_line(int fd)
 			return (NULL);
 	}
 	line = read_fd (fd, &backup);
-	if (line == NULL)
+	if (line == NULL)// || read (fd, 0, 0) == 0)
 	{
 		lstfree (&backup);
 		backup = NULL;
@@ -151,10 +152,8 @@ char	*get_next_line(int fd)
 
 //int main()
 //{
-//	int fd = open ("./1char.txt", O_RDWR);
+//	int fd = open ("./one_line_no_nl.txt", O_RDWR);
 //	char	*gnl;
-//	gnl = get_next_line (fd);
-//	printf ("%s \n", gnl);
-//	gnl = get_next_line (fd);
-//	printf ("%s \n", gnl);
+//	while ((gnl = get_next_line (fd)) != NULL)
+//		printf ("%s \n", gnl);
 //}

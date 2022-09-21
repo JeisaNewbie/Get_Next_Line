@@ -6,7 +6,7 @@
 /*   By: jhwang2 <jhwang2@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/07 15:01:04 by jhwang2           #+#    #+#             */
-/*   Updated: 2022/09/08 18:52:00 by jhwang2          ###   ########.fr       */
+/*   Updated: 2022/09/20 19:58:09 by jhwang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "get_next_line.h"
@@ -14,7 +14,6 @@
 t_list	*lstnew(int fd)
 {
 	t_list	*new;
-
 	new = (t_list *)malloc(sizeof(t_list));
 	if (new == NULL)
 		return (NULL);
