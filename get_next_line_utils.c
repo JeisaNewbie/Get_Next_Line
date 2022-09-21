@@ -29,6 +29,7 @@ void	lstfree(t_list **backup)
 		return ;
 	if ((*backup)->content != NULL)
 	{
+		//ft_memset ((*backup)->content, 0, 0);
 		free ((*backup)->content);
 		(*backup)->content = NULL;
 	}
@@ -52,7 +53,21 @@ int	ft_strchr(const char *s, int c)
 	}
 	return (i);
 }
+void	*ft_memset(void *b, int c, size_t len)
+{
+	unsigned char	a;
+	unsigned char	*tmp;
 
+	a = (unsigned char)c;
+	tmp = (unsigned char *)b;
+	while (len)
+	{
+		*tmp = a;
+		tmp++;
+		len--;
+	}
+	return (b);
+}
 char	*ft_strlcat(char *dst, char *src, size_t count)
 {
 	size_t			len_dst;

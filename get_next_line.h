@@ -34,5 +34,6 @@ int ft_strlen(const char *str);
 char    *ft_split(t_list **backup);
 char    *read_fd(int fd, t_list **backup);
 int ft_strchr(const char *s, int c);
+void    *ft_memset(void *b, int c, size_t len);
 
 #endif

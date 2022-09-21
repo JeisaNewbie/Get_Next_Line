@@ -102,19 +102,20 @@ char	*read_fd(int fd, t_list **backup)
 		tmp[count] = '\0';
 		while (tmp[i] != '\n' && tmp[i] != '\0')
 			i++;
+		tmpptr = (*backup)->content;
 		if (i < count)
 			break ;
-		tmpptr = (*backup)->content;
 		(*backup)->content = ft_strjoin ((*backup)->content, tmp);
-		//printf ("%s \n", (*backup)->content);
 		if (tmpptr != NULL)
 			free (tmpptr);
 		i = 0;
 	}
 	if (count != 0)
+	{
 		(*backup)->content = ft_strjoin ((*backup)->content, tmp);
+		free (tmpptr);
+	}
 	tmpptr = ft_split (backup);
-	//printf ("split backup = %s \n", (*backup)->content);
 	return (tmpptr);
 }
 
@@ -133,6 +134,7 @@ char	*get_next_line(int fd)
 	static t_list	*backup;
 	char			*line;
 
+	line = NULL;
 	if (BUFFER_SIZE <= 0 || fd < 0 || read (fd, 0, 0) < 0)
 		return (NULL);
 	if (find_fd (fd, &backup) == 0)
@@ -142,18 +144,25 @@ char	*get_next_line(int fd)
 			return (NULL);
 	}
 	line = read_fd (fd, &backup);
-	if (line == NULL)// || read (fd, 0, 0) == 0)
+	if (line == NULL)
 	{
 		lstfree (&backup);
 		backup = NULL;
 	}
 	return (line);
 }
+/*int main()
+{	
+	int i = 0;
+	while (i++ < 6)
+		printf("%s", get_next_line(0));
 
-//int main()
-//{
-//	int fd = open ("./one_line_no_nl.txt", O_RDWR);
-//	char	*gnl;
-//	while ((gnl = get_next_line (fd)) != NULL)
-//		printf ("%s \n", gnl);
-//}
+	return (0);
+}
+int main()
+{
+	int fd = open ("./one_line_no_nl.txt", O_RDWR);
+	char	*gnl;
+	while ((gnl = get_next_line (fd)) != NULL)
+		printf ("%s \n", gnl);
+}*/
