@@ -1,40 +1,72 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
+/*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jhwang2 <jhwang2@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jhwang2 <jhwang2@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/08/29 15:46:14 by jhwang2           #+#    #+#             */
-/*   Updated: 2022/08/29 17:55:17 by jhwang2          ###   ########.fr       */
+/*   Created: 2022/09/07 15:01:04 by jhwang2           #+#    #+#             */
+/*   Updated: 2022/09/20 19:58:09 by jhwang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "get_next_line_bonus.h"
 
-#include "get_next_line.h"
-
-t_list	*ft_lstlast(t_list *lst)
+t_list	*lstnew(int fd)
 {
-	if (lst == 0)
-		return (0);
-	while (lst->next)
-		lst = lst->next;
-	return (lst);
+	t_list	*new;
+
+	new = (t_list *)malloc(sizeof(t_list));
+	if (new == NULL)
+		return (NULL);
+	new->content = NULL;
+	new->next = NULL;
+	new->fd = fd;
+	return (new);
 }
 
-t_list	*ft_lstnew(void *content, int fd)
+void	lstfree(t_list **backup, int fd)
 {
-	t_list	*list;
+	t_list	*tmp;
+	t_list	*next;
 
-	list = (t_list *)malloc(sizeof(t_list));
-	if (list == 0)
-		return (0);
-	list->content = content;
-	list->next = 0;
-	list->fd = fd;
-	return (list);
+	if (backup == NULL || *backup == NULL)
+		return ;
+	tmp = *backup;
+	if ((*backup)->fd == fd)
+	{
+		(*backup) = (*backup)->next;
+		if (tmp->content == NULL)
+			free (tmp->content);
+		free (tmp);
+		return ;
+	}
+	while ((*backup)->fd != fd)
+	{
+		tmp = *backup;
+		*backup = (*backup)->next;
+	}
+	next = (*backup)->next;
+	if ((*backup)->content != NULL)
+	{
+		free ((*backup)->content);
+		(*backup)->content = NULL;
+	}
+	free (*backup);
+	*backup = tmp;
+	(*backup)->next = next;
 }
 
-char	*ft_strrchr(const char *s, int c)
+int	find_fd(int fd, t_list **backup)
+{
+	while (*backup != NULL && (*backup)->fd != fd)
+		*backup = (*backup)->next;
+	if (*backup == NULL)
+		return (0);
+	else
+		return (1);
+}
+
+int	ft_strchr(const char *s, int c)
 {
 	char	*string;
 	char	ch;
@@ -43,54 +75,11 @@ char	*ft_strrchr(const char *s, int c)
 	i = 0;
 	string = (char *)s;
 	ch = (char)c;
-	while (i <= BUFFER_SIZE)
+	while (string[i] != '\0')
 	{
 		if (string[i] == ch)
-			return (&string[i]);
+			return (i + 1);
 		i++;
 	}
-	return (0);
-}
-
-char	*ft_strjoin(char const *s1, char const *s2)
-{
-	char	*tmp;
-	size_t	len_s1;
-	int		i;
-
-	len_s1 = 0;
-	while (s1[len_s1] != '\0')
-		len_s1++;
-	tmp = (char *)malloc(sizeof(char) * (len_s1 + BUFFER_SIZE + 1));
-	if (tmp == 0)
-		return (0);
-	tmp[0] = '\0';
-	ft_strlcat(tmp, s1, len_s1 + 1);
-	ft_strlcat(tmp, s2, len_s1 + BUFFER_SIZE + 1);
-	tmp[len_s1 + BUFFER_SIZE] = '\0';
-	return (tmp);
-}
-
-size_t	ft_strlcat(char *dst, const char *src, size_t dstsize)
-{
-	size_t	len_dst;
-	size_t	len_dnd;
-	size_t	size;
-
-	len_dst = 0;
-	while (dst[len_dst] != '\0')
-		len_dst++;
-	len_dnd = len_dst + dstsize;
-	if (dstsize <= len_dst)
-		return (NULL);
-	size = len_dnd - 1;
-	while (size > 0)
-	{
-		dst[len_dst] = *src;
-		src++;
-		len_dst++;
-		size--;
-	}
-	dst[len_dst] = '\0';
-	return (len_dnd);
+	return (i);
 }

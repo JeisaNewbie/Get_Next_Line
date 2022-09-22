@@ -31,16 +31,10 @@ char	*ft_strjoin(char *s1, char *s2)
 	if (tmp == 0)
 		return (0);
 	while (i < len_s1)
-	{
-		tmp[i] = s1[i];
-		i++;
-	}
+		tmp[i++] = *s1++;
 	i = 0;
 	while (i < len_s2)
-	{
-		tmp[i + len_s1] = s2[i];
-		i++;
-	}
+		tmp[i++ + len_s1] = *s2++;
 	tmp[len_s1 + len_s2] = '\0';
 	return (tmp);
 }
@@ -62,7 +56,6 @@ char	*ft_split(t_list **backup)
 	int		i;
 	int		j;
 
-	i = 0;
 	j = 0;
 	if ((*backup)->content == NULL)
 		return (NULL);
@@ -70,14 +63,11 @@ char	*ft_split(t_list **backup)
 	tmp = (char *)malloc(sizeof(char) * (i + 1));
 	if (tmp == NULL)
 		return (NULL);
-	while (j < i)
-	{
-		tmp[j] = (*backup)->content[j];
-		j++;
-	}
-	tmp[j] = '\0';
 	temp = (*backup)->content;
-	(*backup)->content = ft_strjoin(&(*backup)->content[j], "");
+	while (j < i)
+		tmp[j++] = *(*backup)->content++;
+	tmp[j] = '\0';
+	(*backup)->content = ft_strjoin((*backup)->content, "");
 	if ((*backup)->content[0] == '\0')
 	{
 		free ((*backup)->content);
@@ -94,39 +84,23 @@ char	*read_fd(int fd, t_list **backup)
 	int		count;
 	int		i;
 
-	i = 0;
 	while (1)
 	{
-		if ((count = read (fd, tmp, BUFFER_SIZE)) == 0)
+		i = 0;
+		count = read (fd, tmp, BUFFER_SIZE);
+		if (count == 0)
 			break ;
 		tmp[count] = '\0';
-		while (tmp[i] != '\n' && tmp[i] != '\0')
-			i++;
 		tmpptr = (*backup)->content;
-		if (i < count)
-			break ;
-		(*backup)->content = ft_strjoin ((*backup)->content, tmp);
-		if (tmpptr != NULL)
-			free (tmpptr);
-		i = 0;
-	}
-	if (count != 0)
-	{
 		(*backup)->content = ft_strjoin ((*backup)->content, tmp);
 		free (tmpptr);
+		while (tmp[i] != '\n' && tmp[i] != '\0')
+			i++;
+		if (tmp[i] == '\n')
+			break ;
 	}
 	tmpptr = ft_split (backup);
 	return (tmpptr);
-}
-
-int	find_fd(int fd, t_list **backup)
-{
-	while (*backup != NULL && (*backup)->fd != fd)
-		*backup = (*backup)->next;
-	if (*backup == NULL)
-		return (0);
-	else
-		return ((*backup)->fd);
 }
 
 char	*get_next_line(int fd)
@@ -156,7 +130,6 @@ char	*get_next_line(int fd)
 	int i = 0;
 	while (i++ < 6)
 		printf("%s", get_next_line(0));
-
 	return (0);
 }
 int main()

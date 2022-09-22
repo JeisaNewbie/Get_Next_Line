@@ -1,109 +1,143 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jhwang2 <jhwang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/08/29 15:46:07 by jhwang2           #+#    #+#             */
-/*   Updated: 2022/08/29 18:00:57 by jhwang2          ###   ########.fr       */
+/*   Created: 2022/09/07 15:01:38 by jhwang2           #+#    #+#             */
+/*   Updated: 2022/09/20 19:46:03 by jhwang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+#include "get_next_line_bonus.h"
+#include <stdio.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <stdlib.h>
 
-#include "get_next_line.h"
+char	*ft_strjoin(char *s1, char *s2)
+{
+	char	*tmp;
+	int		len_s1;
+	int		len_s2;
+	int		i;
 
-t_list	*backup = NULL;
+	i = 0;
+	if (s1 == NULL)
+		s1 = "";
+	len_s1 = ft_strlen(s1);
+	len_s2 = ft_strlen(s2);
+	tmp = (char *)malloc(sizeof(char) * (len_s1 + len_s2 + 1));
+	if (tmp == 0)
+		return (0);
+	while (i < len_s1)
+		tmp[i++] = *s1++;
+	i = 0;
+	while (i < len_s2)
+		tmp[i++ + len_s1] = *s2++;
+	tmp[len_s1 + len_s2] = '\0';
+	return (tmp);
+}
 
-void	ft_strmove(char *tmp, int length)
+int	ft_strlen(const char *str)
 {
 	int	i;
 
 	i = 0;
-	while ((length + i) <= BUFFER_SIZE)
-	{
-		tmp[i] = tmp[length + i];
+	while (str[i] != '\0')
 		i++;
-	}
-	while (i <= BUFFER_SIZE)
-	{
-		tmp[i] = '\0';
-		i++;
-	}
+	return (i);
 }
 
-char	*ft_split(t_list *lstbackup, int fd)
+char	*ft_split(t_list **backup)
 {
 	char	*tmp;
+	char	*temp;
 	int		i;
+	int		j;
 
-	i = ft_strrchr (lstbackup->content, '\n');
-	tmp = ft_strdup (lstbackup->content, i);
-	ft_strmove (lstbackup->content, i + 1);
+	j = 0;
+	if ((*backup)->content == NULL)
+		return (NULL);
+	i = ft_strchr ((*backup)->content, '\n');
+	tmp = (char *)malloc(sizeof(char) * (i + 1));
+	if (tmp == NULL)
+		return (NULL);
+	temp = (*backup)->content;
+	while (j < i)
+		tmp[j++] = *(*backup)->content++;
+	tmp[j] = '\0';
+	(*backup)->content = ft_strjoin((*backup)->content, "");
+	if ((*backup)->content[0] == '\0')
+	{
+		free ((*backup)->content);
+		(*backup)->content = NULL;
+	}
+	free (temp);
 	return (tmp);
 }
 
-char	*new_string(char *tmp, int count, char *backup_content)
+char	*read_fd(int fd, t_list **backup)
 {
-	char	*tmp1;
-
-	tmp1 = (char *)malloc(sizeof(char) * (BUFFER_SIZE * count) + 1);
-	if (tmp1 == NULL)
-		return (NULL);
-	tmp1[0] = '\0';
-	ft_strlcat (tmp1, backup_content, (BUFFER_SIZE * count) + 1);
-	return (tmp1);
-}
-
-t_list	*find_fd(int fd)
-{
-	t_list	*tmp;
-	char	*str;
+	char	tmp[BUFFER_SIZE + 1];
+	char	*tmpptr;
+	int		count;
 	int		i;
 
-	tmp = backup;
-	if (tmp->fd != fd)
+	while (1)
 	{
-		while ((tmp->next) != 0)
-		{
-			if (tmp->fd == fd)
-				break ;
-			tmp = tmp->next;
-		}
+		i = 0;
+		count = read (fd, tmp, BUFFER_SIZE);
+		if (count == 0)
+			break ;
+		tmp[count] = '\0';
+		tmpptr = (*backup)->content;
+		(*backup)->content = ft_strjoin ((*backup)->content, tmp);
+		free (tmpptr);
+		while (tmp[i] != '\n' && tmp[i] != '\0')
+			i++;
+		if (tmp[i] == '\n')
+			break ;
 	}
-	if ((tmp->fd != fd) || tmp->content == 0)
-	{
-		if ((i = read (fd, str, BUFFER_SIZE)) < 0)
-			return (NULL);
-		tmp->next = ft_lstnew (str, fd);
-	}
-	return (tmp->next);
+	tmpptr = ft_split (backup);
+	return (tmpptr);
 }
 
 char	*get_next_line(int fd)
 {
-	static t_list	*backup = NULL;
-	t_list			*lstbackup;
-	char			*tmp;
-	int				i;
-	int				count;
+	static t_list	*backup;
+	t_list			*backup_head;
+	char			*line;
 
-	count = 1;
-	if (backup == NULL)
+	line = NULL;
+	backup_head = backup;
+	if (BUFFER_SIZE <= 0 || fd < 0 || read (fd, 0, 0) < 0)
+		return (NULL);
+	if (find_fd (fd, &backup_head) == 0)
 	{
-		if ((i = read (fd, tmp, BUFFER_SIZE)) < 0)
-			return (NULL);		
-		backup = ft_lstnew (tmp, fd);
+		backup_head = lstnew (fd);
+		if (backup_head == NULL)
+			return (NULL);
 	}
-	lstbackup = find_fd (fd);
-	while (ft_strrchr (lstbackup->content, '\n') == 0)
+	line = read_fd (fd, &backup);
+	if (line == NULL)
 	{
-		tmp = new_string (tmp, count, lstbackup->content);
-		count++;
-		i = read (fd, lstbackup->content, BUFFER_SIZE);
-		lstbackup->content = ft_strjoin (tmp, lstbackup->content);
-		if (i < BUFFER_SIZE)
-			break ;
+		lstfree (&backup, fd);
+		backup_head = NULL;
 	}
-	tmp = ft_split (lstbackup, fd);
-	return (tmp);
+	return (line);
 }
+/*int main()
+{	
+	int i = 0;
+	while (i++ < 6)
+		printf("%s", get_next_line(0));
+	return (0);
+}
+int main()
+{
+	int fd = open ("./one_line_no_nl.txt", O_RDWR);
+	char	*gnl;
+	while ((gnl = get_next_line (fd)) != NULL)
+		printf ("%s \n", gnl);
+}*/

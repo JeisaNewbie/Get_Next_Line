@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
+#ifndef GET_NEXT_LINE_BONUS_H
+# define GET_NEXT_LINE_BONUS_H
 
 # include <stdlib.h>
 # include <unistd.h>
@@ -24,7 +24,7 @@ typedef struct s_list
 }	t_list;
 
 t_list	*lstnew(int fd);
-void	lstfree(t_list **backup);
+void	lstfree(t_list **backup, int fd);
 int		find_fd(int fd, t_list **backup);
 char	*get_next_line(int fd);
 char	*ft_strjoin(char *s1, char *s2);
