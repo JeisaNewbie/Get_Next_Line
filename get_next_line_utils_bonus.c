@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jhwang2 <jhwang2@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/07 15:01:04 by jhwang2           #+#    #+#             */
-/*   Updated: 2022/09/20 19:58:09 by jhwang2          ###   ########.fr       */
+/*   Updated: 2022/09/23 22:01:40 by jhwang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "get_next_line_bonus.h"
@@ -27,33 +27,30 @@ t_list	*lstnew(int fd)
 void	lstfree(t_list **backup, int fd)
 {
 	t_list	*tmp;
-	t_list	*next;
+	t_list	*prev;
 
 	if (backup == NULL || *backup == NULL)
 		return ;
 	tmp = *backup;
-	if ((*backup)->fd == fd)
+	prev = *backup;
+	if (tmp->fd == fd)
 	{
 		(*backup) = (*backup)->next;
-		if (tmp->content == NULL)
+		if (tmp->content != NULL)
 			free (tmp->content);
 		free (tmp);
 		return ;
 	}
-	while ((*backup)->fd != fd)
+	while (tmp->fd != fd)
 	{
-		tmp = *backup;
-		*backup = (*backup)->next;
+		*backup = tmp;
+		tmp = tmp->next;
 	}
-	next = (*backup)->next;
-	if ((*backup)->content != NULL)
-	{
-		free ((*backup)->content);
-		(*backup)->content = NULL;
-	}
-	free (*backup);
-	*backup = tmp;
-	(*backup)->next = next;
+	(*backup)->next = tmp->next;
+	if (tmp->content != NULL)
+		free (tmp->content);
+	free (tmp);
+	*backup = prev;
 }
 
 int	find_fd(int fd, t_list **backup)

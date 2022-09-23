@@ -1,16 +1,15 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jhwang2 <jhwang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/07 15:01:38 by jhwang2           #+#    #+#             */
-/*   Updated: 2022/09/20 19:46:03 by jhwang2          ###   ########.fr       */
+/*   Updated: 2022/09/23 22:02:10 by jhwang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "get_next_line_bonus.h"
-#include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdlib.h>
@@ -110,20 +109,22 @@ char	*get_next_line(int fd)
 	char			*line;
 
 	line = NULL;
-	backup_head = backup;
 	if (BUFFER_SIZE <= 0 || fd < 0 || read (fd, 0, 0) < 0)
 		return (NULL);
-	if (find_fd (fd, &backup_head) == 0)
+	if (find_fd (fd, &backup) == 0)
 	{
-		backup_head = lstnew (fd);
-		if (backup_head == NULL)
+		backup = lstnew (fd);
+		if (backup == NULL)
 			return (NULL);
 	}
+	backup_head = backup;
 	line = read_fd (fd, &backup);
 	if (line == NULL)
 	{
+		//backup = backup_head;
 		lstfree (&backup, fd);
-		backup_head = NULL;
+		//if (backup)
+			//backup = backup_head;
 	}
 	return (line);
 }
