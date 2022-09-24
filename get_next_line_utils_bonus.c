@@ -6,7 +6,7 @@
 /*   By: jhwang2 <jhwang2@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/07 15:01:04 by jhwang2           #+#    #+#             */
-/*   Updated: 2022/09/23 22:01:40 by jhwang2          ###   ########.fr       */
+/*   Updated: 2022/09/24 18:46:27 by jhwang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "get_next_line_bonus.h"
@@ -55,12 +55,15 @@ void	lstfree(t_list **backup, int fd)
 
 int	find_fd(int fd, t_list **backup)
 {
-	while (*backup != NULL && (*backup)->fd != fd)
-		*backup = (*backup)->next;
-	if (*backup == NULL)
-		return (0);
-	else
+	if ((*backup)->fd == fd)
 		return (1);
+	while ((*backup)->next != NULL)
+	{
+		*backup = (*backup)->next;
+		if ((*backup)->fd == fd)
+			return (1);
+	}
+	return (0);
 }
 
 int	ft_strchr(const char *s, int c)

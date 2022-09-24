@@ -6,7 +6,7 @@
 /*   By: jhwang2 <jhwang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/07 15:01:38 by jhwang2           #+#    #+#             */
-/*   Updated: 2022/09/23 22:02:10 by jhwang2          ###   ########.fr       */
+/*   Updated: 2022/09/24 20:22:54 by jhwang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "get_next_line_bonus.h"
@@ -83,11 +83,13 @@ char	*read_fd(int fd, t_list **backup)
 	int		count;
 	int		i;
 
+	if (read (fd, 0, 0) == -1)
+		return (NULL);
 	while (1)
 	{
 		i = 0;
 		count = read (fd, tmp, BUFFER_SIZE);
-		if (count == 0)
+		if (count <= 0)
 			break ;
 		tmp[count] = '\0';
 		tmpptr = (*backup)->content;
@@ -108,24 +110,26 @@ char	*get_next_line(int fd)
 	t_list			*backup_head;
 	char			*line;
 
-	line = NULL;
-	if (BUFFER_SIZE <= 0 || fd < 0 || read (fd, 0, 0) < 0)
+	if (BUFFER_SIZE <= 0 || fd < 0)
 		return (NULL);
-	if (find_fd (fd, &backup) == 0)
+	if (backup == NULL)
 	{
 		backup = lstnew (fd);
 		if (backup == NULL)
 			return (NULL);
 	}
 	backup_head = backup;
-	line = read_fd (fd, &backup);
-	if (line == NULL)
+	if (find_fd (fd, &backup) == 0)
 	{
-		//backup = backup_head;
-		lstfree (&backup, fd);
-		//if (backup)
-			//backup = backup_head;
+		backup->next = lstnew (fd);
+		if (backup->next == NULL)
+			return (NULL);
+		backup = backup->next;
 	}
+	line = read_fd (fd, &backup);
+	backup = backup_head;
+	if (line == NULL)
+		lstfree (&backup, fd);
 	return (line);
 }
 /*int main()
@@ -135,9 +139,10 @@ char	*get_next_line(int fd)
 		printf("%s", get_next_line(0));
 	return (0);
 }
+#include<stdio.h>
 int main()
 {
-	int fd = open ("./one_line_no_nl.txt", O_RDWR);
+	int fd = open ("./alternate_line_nl_no_nl.txt", O_RDWR);
 	char	*gnl;
 	while ((gnl = get_next_line (fd)) != NULL)
 		printf ("%s \n", gnl);
