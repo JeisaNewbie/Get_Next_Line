@@ -6,7 +6,7 @@
 /*   By: jhwang2 <jhwang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/29 15:46:22 by jhwang2           #+#    #+#             */
-/*   Updated: 2022/09/08 18:30:25 by ahkiler          ###   ########.fr       */
+/*   Updated: 2022/09/24 21:28:26 by jhwang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include <stdlib.h>
 # include <unistd.h>
+# include <fcntl.h>
 
 typedef struct s_list
 {
@@ -25,7 +26,6 @@ typedef struct s_list
 
 t_list	*lstnew(int fd);
 void	lstfree(t_list **backup);
-int		find_fd(int fd, t_list **backup);
 char	*get_next_line(int fd);
 char	*ft_strjoin(char *s1, char *s2);
 int		ft_strlen(const char *str);

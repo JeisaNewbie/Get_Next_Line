@@ -6,13 +6,10 @@
 /*   By: jhwang2 <jhwang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/07 15:01:38 by jhwang2           #+#    #+#             */
-/*   Updated: 2022/09/24 20:22:54 by jhwang2          ###   ########.fr       */
+/*   Updated: 2022/09/24 21:40:36 by jhwang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "get_next_line_bonus.h"
-#include <unistd.h>
-#include <fcntl.h>
-#include <stdlib.h>
 
 char	*ft_strjoin(char *s1, char *s2)
 {
@@ -89,12 +86,13 @@ char	*read_fd(int fd, t_list **backup)
 	{
 		i = 0;
 		count = read (fd, tmp, BUFFER_SIZE);
-		if (count <= 0)
+		if (count == 0)
 			break ;
 		tmp[count] = '\0';
 		tmpptr = (*backup)->content;
 		(*backup)->content = ft_strjoin ((*backup)->content, tmp);
-		free (tmpptr);
+		if (tmpptr != NULL)
+			free (tmpptr);
 		while (tmp[i] != '\n' && tmp[i] != '\0')
 			i++;
 		if (tmp[i] == '\n')

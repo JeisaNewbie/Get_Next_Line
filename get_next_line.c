@@ -6,14 +6,10 @@
 /*   By: jhwang2 <jhwang2@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/07 15:01:38 by jhwang2           #+#    #+#             */
-/*   Updated: 2022/09/20 19:46:03 by jhwang2          ###   ########.fr       */
+/*   Updated: 2022/09/24 21:40:16 by jhwang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "get_next_line.h"
-#include <stdio.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <stdlib.h>
 
 char	*ft_strjoin(char *s1, char *s2)
 {
@@ -84,6 +80,8 @@ char	*read_fd(int fd, t_list **backup)
 	int		count;
 	int		i;
 
+	if (read (fd, 0, 0) == -1)
+		return (NULL);
 	while (1)
 	{
 		i = 0;
@@ -93,7 +91,8 @@ char	*read_fd(int fd, t_list **backup)
 		tmp[count] = '\0';
 		tmpptr = (*backup)->content;
 		(*backup)->content = ft_strjoin ((*backup)->content, tmp);
-		free (tmpptr);
+		if (tmpptr != NULL)
+			free (tmpptr);
 		while (tmp[i] != '\n' && tmp[i] != '\0')
 			i++;
 		if (tmp[i] == '\n')
@@ -108,10 +107,9 @@ char	*get_next_line(int fd)
 	static t_list	*backup;
 	char			*line;
 
-	line = NULL;
-	if (BUFFER_SIZE <= 0 || fd < 0 || read (fd, 0, 0) < 0)
+	if (BUFFER_SIZE <= 0 || fd < 0)
 		return (NULL);
-	if (find_fd (fd, &backup) == 0)
+	if (backup == NULL)
 	{
 		backup = lstnew (fd);
 		if (backup == NULL)
@@ -125,17 +123,3 @@ char	*get_next_line(int fd)
 	}
 	return (line);
 }
-/*int main()
-{	
-	int i = 0;
-	while (i++ < 6)
-		printf("%s", get_next_line(0));
-	return (0);
-}
-int main()
-{
-	int fd = open ("./one_line_no_nl.txt", O_RDWR);
-	char	*gnl;
-	while ((gnl = get_next_line (fd)) != NULL)
-		printf ("%s \n", gnl);
-}*/

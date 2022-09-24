@@ -6,7 +6,7 @@
 /*   By: jhwang2 <jhwang2@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/07 15:01:04 by jhwang2           #+#    #+#             */
-/*   Updated: 2022/09/20 19:58:09 by jhwang2          ###   ########.fr       */
+/*   Updated: 2022/09/24 21:28:17 by jhwang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "get_next_line.h"
@@ -26,24 +26,12 @@ t_list	*lstnew(int fd)
 
 void	lstfree(t_list **backup)
 {
-	if (backup == NULL || *backup == NULL)
-		return ;
 	if ((*backup)->content != NULL)
 	{
 		free ((*backup)->content);
 		(*backup)->content = NULL;
 	}
 	free (*backup);
-}
-
-int	find_fd(int fd, t_list **backup)
-{
-	while (*backup != NULL && (*backup)->fd != fd)
-		*backup = (*backup)->next;
-	if (*backup == NULL)
-		return (0);
-	else
-		return (1);
 }
 
 int	ft_strchr(const char *s, int c)

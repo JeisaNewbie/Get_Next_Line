@@ -6,7 +6,7 @@
 /*   By: jhwang2 <jhwang2@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/07 15:01:04 by jhwang2           #+#    #+#             */
-/*   Updated: 2022/09/24 18:46:27 by jhwang2          ###   ########.fr       */
+/*   Updated: 2022/09/24 21:26:40 by jhwang2          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "get_next_line_bonus.h"
@@ -29,8 +29,6 @@ void	lstfree(t_list **backup, int fd)
 	t_list	*tmp;
 	t_list	*prev;
 
-	if (backup == NULL || *backup == NULL)
-		return ;
 	tmp = *backup;
 	prev = *backup;
 	if (tmp->fd == fd)
