@@ -130,18 +130,3 @@ char	*get_next_line(int fd)
 		lstfree (&backup, fd);
 	return (line);
 }
-/*int main()
-{	
-	int i = 0;
-	while (i++ < 6)
-		printf("%s", get_next_line(0));
-	return (0);
-}
-#include<stdio.h>
-int main()
-{
-	int fd = open ("./alternate_line_nl_no_nl.txt", O_RDWR);
-	char	*gnl;
-	while ((gnl = get_next_line (fd)) != NULL)
-		printf ("%s \n", gnl);
-}*/
